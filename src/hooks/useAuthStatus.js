@@ -20,7 +20,7 @@ export const useAuthStatus = () => {
 
     return () => {
       isMounted.current = false;
-      console.log('clean');
+      //console.log('clean');
     };
   }, [isMounted]);
 
