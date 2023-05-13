@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { getAuth, onAuthStateChanged } from "@firebase/auth";
 import {
   getStorage,
@@ -8,40 +8,26 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import { db } from "../firebase.config";
-import { v4 as uuidv4 } from "uuid";
 import { useNavigate, useParams } from "react-router-dom";
 import Spinner from "../components/Spinner";
 import { toast } from "react-toastify";
-import {
-  addDoc,
-  collection,
-  serverTimestamp,
-  doc,
-  getDoc,
-  updateDoc,
-} from "firebase/firestore";
+import { serverTimestamp, doc, getDoc, updateDoc } from "firebase/firestore";
 import axios from "axios";
 function EditListing() {
-  const isMounted = useRef(false);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [listing, setListing] = useState({});
   const auth = getAuth();
   const params = useParams();
   useEffect(() => {
-    if (isMounted) {
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          setFormData({ ...formData, userRef: user.uid });
-        } else {
-          navigate("/sign-in");
-        }
-      });
-    }
-    return () => {
-      isMounted.current = true;
-    };
-  }, [isMounted]);
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setFormData({ ...formData, userRef: user.uid });
+      } else {
+        navigate("/sign-in");
+      }
+    });
+  }, []);
   const [geolocationEnabled, setGeolocationEnabled] = useState(true);
   const [formData, setFormData] = useState({
     type: "rent",

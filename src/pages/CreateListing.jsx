@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { getAuth, onAuthStateChanged } from "@firebase/auth";
 import {
   getStorage,
@@ -8,35 +8,28 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import { db } from "../firebase.config";
-import { v4 as uuidv4 } from "uuid";
 import { useNavigate } from "react-router-dom";
 import Spinner from "../components/Spinner";
 import { toast } from "react-toastify";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import axios from "axios";
 function CreateListing() {
-  const isMounted = useRef(false);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const auth = getAuth();
   useEffect(() => {
-    if (isMounted.current === true) {
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          setFormData({ ...formData, userRef: user.uid });
-          navigator.geolocation.getCurrentPosition(function (position) {
-            console.log("Latitude is :", position.coords.latitude);
-            console.log("Longitude is :", position.coords.longitude);
-          });
-        } else {
-          navigate("/sign-in");
-        }
-      });
-    }
-    return () => {
-      isMounted.current = true;
-    };
-  }, [isMounted]);
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setFormData({ ...formData, userRef: user.uid });
+        navigator.geolocation.getCurrentPosition(function (position) {
+          console.log("Latitude is :", position.coords.latitude);
+          console.log("Longitude is :", position.coords.longitude);
+        });
+      } else {
+        navigate("/sign-in");
+      }
+    });
+  }, []);
   const [geolocationEnabled, setGeolocationEnabled] = useState(true);
   const [formData, setFormData] = useState({
     type: "rent",
@@ -106,7 +99,7 @@ function CreateListing() {
     }
     //uploadImage
     const storeImage = async (image) => {
-      return new Promise((resolve, reject) => {
+      return new ((resolve, reject) => {
         const storage = getStorage();
         const fileName = `${auth.currentUser.uid}-${image.name}`;
         const storageRef = ref(storage, fileName);
@@ -140,7 +133,7 @@ function CreateListing() {
             });
           }
         );
-      });
+      })();
     };
     const imageUrls = await Promise.all(
       [...images].map((image) => storeImage(image))
@@ -149,8 +142,6 @@ function CreateListing() {
       toast.error("Images not uploaded");
       return;
     });
-
-    
 
     const formDataCopy = {
       ...formData,

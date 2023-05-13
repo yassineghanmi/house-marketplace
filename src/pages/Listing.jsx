@@ -1,11 +1,11 @@
 import { doc, getDoc } from "firebase/firestore";
-import React, { useEffect, useRef, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import { db } from "../firebase.config";
 import Spinner from "../components/Spinner";
 import shareIcon from "../assets/svg/shareIcon.svg";
 import { getAuth } from "@firebase/auth";
-import { MapContainer, TileLayer, useMap, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import SwiperCore, { Navigation, Pagination, Scrollbar, A11y } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/swiper-bundle.css";
@@ -13,13 +13,12 @@ import "swiper/swiper-bundle.css";
 SwiperCore.use([Navigation, Pagination, Scrollbar, A11y]);
 
 function Listing() {
-  const isRendered = useRef(false);
   const [listing, setListing] = useState({});
   const [shareLinkCopied, setShareLinkCopied] = useState(false);
 
   const [loading, setLoading] = useState(true);
   const params = useParams();
-  const navigate = useNavigate();
+
   const auth = getAuth();
 
   useEffect(() => {
@@ -29,18 +28,13 @@ function Listing() {
       if (docSnap.exists()) {
         setListing(docSnap.data());
 
-        console.log(listing);
+        //console.log(listing);
 
         setLoading(false);
       }
     };
-    if (isRendered.current === true) {
-      fetchListings();
-    }
 
-    return () => {
-      isRendered.current = true;
-    };
+    fetchListings();
   }, [params.listingId]);
   if (loading) {
     return <Spinner />;

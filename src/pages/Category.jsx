@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
   collection,
@@ -18,7 +18,6 @@ function Category() {
   const [listings, setListings] = useState(null);
   const [loading, setLoading] = useState(true);
   const [lastFetchedListing, setLastFetchedListing] = useState(null);
-  const isMounted = useRef(false);
   const params = useParams();
 
   useEffect(() => {
@@ -47,12 +46,8 @@ function Category() {
         toast.info("Could not fetch data");
       }
     };
-    if (isMounted.current === true) {
-      fetchListings();
-    }
-    return () => {
-      isMounted.current = true;
-    };
+
+    fetchListings();
   }, [params.categoryName]);
   const onLoadMoreListings = async () => {
     try {

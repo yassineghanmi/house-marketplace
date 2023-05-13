@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import {
   collection,
   getDocs,
@@ -17,7 +17,6 @@ function Offers() {
   const [listings, setListings] = useState(null);
   const [loading, setLoading] = useState(true);
   const [lastFetchedListing, setLastFetchedListing] = useState(null);
-  const isMounted = useRef(false);
 
   useEffect(() => {
     const fetchListings = async () => {
@@ -44,12 +43,8 @@ function Offers() {
         toast.info("Could not fetch data");
       }
     };
-    if (isMounted.current === true) {
-      fetchListings();
-    }
-    return () => {
-      isMounted.current = true;
-    };
+
+    fetchListings();
   }, []);
   const onLoadMoreListings = async () => {
     try {
