@@ -1,11 +1,5 @@
-import {
-  collection,
-  getDocs,
-  limit,
-  orderBy,
-  query,
-} from "firebase/firestore";
-import React, { useEffect, useRef, useState } from "react";
+import { collection, getDocs, limit, orderBy, query } from "firebase/firestore";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { db } from "../firebase.config";
 import SwiperCore, { Navigation, Pagination, Scrollbar, A11y } from "swiper";
@@ -19,7 +13,6 @@ function Slider() {
   const [loading, setLoading] = useState(true);
   const [listing, setListing] = useState();
   const navigate = useNavigate();
-  const isRendered = useRef(false);
   useEffect(() => {
     const fetchListings = async () => {
       const listingRef = collection(db, "listings");
@@ -33,17 +26,12 @@ function Slider() {
           data: doc.data(),
         });
       });
-
       setListing(listings);
       setLoading(false);
       //console.log(listing);
     };
-    if (isRendered.current === true) {
-      fetchListings();
-    }
-    return () => {
-      isRendered.current = true;
-    };
+
+    fetchListings();
   }, []);
   //console.log("outside ", listing);
 
